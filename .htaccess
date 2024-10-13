@@ -1,0 +1,31 @@
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php82” package as the default “PHP” programming language.
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
+
+# Evitar el acceso directo al archivo tokens.txt
+<Files "tokens.txt">
+    Require all denied
+</Files>
+
+RewriteEngine On
+
+# Prueba de redirección simple
+RewriteRule ^test/?$ api/test.php [L]
+
+# Bloquear acceso directo a las carpetas de imágenes
+RewriteRule ^images/ - [F,L]
+
+# Redirigir las solicitudes a /upload/ y /image/ hacia los scripts correspondientes
+RewriteCond %{REQUEST_URI} ^/upload/ [NC]
+RewriteRule ^upload/(.*)$ api/upload.php?folder=$1 [L,QSA]
+
+RewriteCond %{REQUEST_URI} ^/image/ [NC]
+RewriteRule ^image/(.*)$ api/image.php?folder=$1 [L,QSA]
+
+RewriteCond %{REQUEST_URI} ^/exists/ [NC]
+RewriteRule ^image/(.*)$ api/exists.php?folder=$1 [L,QSA]
+
